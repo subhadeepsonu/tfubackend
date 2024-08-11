@@ -15,12 +15,12 @@ app.get("/flashcard",async (req,res)=>{
         const response = await prisma.card.findMany({
         })
         
-        res.json({
+        return res.json({
             success:true,
             message:response
         })
     } catch (error) {
-        res.json({
+        return res.json({
             success:false,
             message:error.message
         })
@@ -32,7 +32,7 @@ app.post("/flashcard",async (req,res)=>{
         const token = req.headers.authorization
         
         if(!token){
-            res.json({
+            return res.json({
                 success:false,
                 message:"Unauthorized"
             })
@@ -40,7 +40,7 @@ app.post("/flashcard",async (req,res)=>{
         
         const check = jwt.verify(token,process.env.jwtSecret)
         if(!check){
-            res.json({
+            return res.json({
                 success:false,
                 message:"Unauthorized"
             })
@@ -51,12 +51,12 @@ app.post("/flashcard",async (req,res)=>{
                 description:data.description
             }
         })
-        res.json({
+        return  res.json({
             success:true,
             message:response
         })
     } catch (error) {
-        res.json({
+        return res.json({
             success:false,
             message:error.message
         })
@@ -67,14 +67,14 @@ app.delete("/flashcard",async (req,res)=>{
         const data = req.body
         const token = req.headers.authorization
         if(!token){
-            res.json({
+            return res.json({
                 success:false,
                 message:"Unauthorized"
             })
         }
         const check = jwt.verify(token,process.env.jwtSecret)
         if(!check){
-            res.json({
+            return  res.json({
                 success:false,
                 message:"Unauthorized"
             })
@@ -84,12 +84,12 @@ app.delete("/flashcard",async (req,res)=>{
                 id:data.id
             }
         })
-        res.json({
+        return res.json({
             success:true,
             message:response
         })
     } catch (error) {
-        res.json({
+        return res.json({
             success:false,
             message:error.message
         })
@@ -101,14 +101,14 @@ app.put("/flashcard",async (req,res)=>{
         const data = req.body
         const token = req.headers.authorization
         if(!token){
-            res.json({
+            return   res.json({
                 success:false,
                 message:"Unauthorized"
             })
         }
         const check = jwt.verify(token,process.env.jwtSecret)
         if(!check){
-            res.json({
+            return    res.json({
                 success:false,
                 message:"Unauthorized"
             })
@@ -122,12 +122,12 @@ app.put("/flashcard",async (req,res)=>{
                 description:data.description
             }
         })
-        res.json({
+        return res.json({
             success:true,
             message:response
         })
     } catch (error) {
-        res.json({
+        return  res.json({
             success:false,
             message:error.message
         })
@@ -136,20 +136,21 @@ app.put("/flashcard",async (req,res)=>{
 app.post("/login",async(req,res)=>{
     try {
         const data = req.body
+        console.log(data)
         const response = await prisma.admin.findUnique({
             where:{
                 username:data.username
             }
         })
         if(!response){
-            res.json({
+            return  res.json({
                 success:false,
                 message:"User not found"
             })
         }
         const check = bcrypt.compareSync(data.password,response.password)
         if(!check){
-            res.json({
+            return   res.json({
                 success:false,
                 message:"Invalid password"
             })
@@ -158,12 +159,13 @@ app.post("/login",async(req,res)=>{
             id:response.id,
             username:data.username
         },process.env.jwtSecret)
-        res.json({
+        return   res.json({
             success:true,
             message:token
         })
     } catch (error) {
-        res.json({
+        console.log(error)
+        return  res.json({
             success:false,
             message:error.message
         })
@@ -178,7 +180,7 @@ app.post("/register",async (req,res)=>{
             }
         })
         if(user){
-            res.json({
+            return res.json({
                 success:false,
                 message:"User already exists"
             })
@@ -195,12 +197,12 @@ app.post("/register",async (req,res)=>{
             id:response.id,
             username:data.username
         },process.env.jwtSecret)
-        res.json({
+        return res.json({
             success:true,
             message:token
         })
     } catch (error) {
-        res.json({
+        return res.json({
             success:false,
             message:error.message
         })
